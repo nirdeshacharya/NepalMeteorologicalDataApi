@@ -17,14 +17,9 @@ namespace NepaliWeatherApi.Controllers
         [HttpGet]
         public object WeatherApi(string city=null)
         {
-            if (city != null)
-            {
-              return  _wetherServ.GetWeatherByDetail(city);
-            }
-            else
-            {
-                return _wetherServ.GetAllWeather();
-            }
+           
+              return  _wetherServ.GetWeatherData(city);
+           
         }
         
 

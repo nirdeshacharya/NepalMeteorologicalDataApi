@@ -18,13 +18,10 @@ namespace NepaliWeatherApi
     }
     public class WeatherService
     {
-       public WetherModel GetWeatherByDetail(string city)
+      
+        public List<WetherModel> GetWeatherData(string city)
         {
-            return ParseWeather().Where(x => x.City == city).FirstOrDefault();
-        }
-        public List<WetherModel> GetAllWeather()
-        {
-            return ParseWeather().ToList();
+            return city!=null?ParseWeather().Where(x=>x.City==city).ToList():ParseWeather().ToList();
         }
         public List<WetherModel> ParseWeather()
         {
