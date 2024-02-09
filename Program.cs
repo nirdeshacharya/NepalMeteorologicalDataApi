@@ -13,13 +13,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1");
     });
 }
 
 app.UseHttpsRedirection();
 
-app.MapGet("/weatherreport", async () =>
+app.MapGet("/GetWeatherReport", async (string city) =>
 {
     var webClient = new HttpClient();
     string page = await webClient.GetStringAsync("http://www.mfd.gov.np/weather/");
@@ -42,11 +42,12 @@ app.MapGet("/weatherreport", async () =>
 
         if (double.TryParse(item[1], out var maxTemp) &&
             double.TryParse(item[2], out var minTemp) &&
-            double.TryParse(item[3].Replace("*", ""), out var rainfall))
+            double.TryParse(item[3].Replace("*", ""), out var rainfall) &&
+            item[0].ToLower() == city.ToLower())
         {
             return new WeatherReport
             {
-                City = item[0].ToLower(), 
+                City = item[0], 
                 MaxTemp = maxTemp,
                 MinTemp = minTemp,
                 Rainfall = rainfall,
@@ -56,15 +57,18 @@ app.MapGet("/weatherreport", async () =>
     })
     .Where(weatherReport => weatherReport != null)
     .ToList();
-
+   return result;
 })
-.WithName("GetWeatherReport")
+.WithDescription("Only works with major cities: Dipayal, Dadeldhura, Dhangadi, Birendranagar, Nepalgunj, Jumla, Ghorahi, Pokhara, Bhairahawa, Simara, Kathmandu, Okhaldhunga, Taplejung, Dhankuta, Biratnagar, Jomsom, Dharan, Lumle, Janakpur, Jiri")
 .WithOpenApi();
 
 app.Run();
 
 record WeatherReport(string City, double MinTemp, double MaxTemp, double Rainfall)
 {
-    public int MinTempF => 32 + (int)(MinTemp / 0.5556);
-    public int MaxTempF => 32 + (int)(MaxTemp / 0.5556);
+    public WeatherReport() : this("", 0.0, 0.0, 0.0)
+    {
+    }
+    public int MinTempF => (int)(MinTemp * 9 / 5) + 32;
+    public int MaxTempF => (int)(MaxTemp * 9 / 5) + 32;
 }
