@@ -1,6 +1,0 @@
-@NepalMeteorologicalDataApi_HostAddress = http://localhost:5086
-
-GET {{NepalMeteorologicalDataApi_HostAddress}}/weatherreport/
-Accept: application/json
-
-###
